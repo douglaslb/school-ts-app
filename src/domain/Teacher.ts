@@ -4,6 +4,7 @@ import { z } from "zod";
 import { Serializable } from "./types.js";
 
 export const TeacherCreationSchema = z.object({
+  id: z.string().uuid().optional(),
   firstName: z.string(),
   surname: z.string(),
   phone: z.string(),
@@ -15,7 +16,6 @@ export const TeacherCreationSchema = z.object({
     .datetime()
     .refine((date) => !isNaN(new Date(date).getTime())),
   major: z.string(),
-  id: z.string().uuid().optional(),
 });
 
 export const TeacherUpdateSchema = TeacherCreationSchema.partial().omit({

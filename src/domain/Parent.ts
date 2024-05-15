@@ -7,8 +7,8 @@ export const ParentCreationSchema = z.object({
   id: z.string().uuid().optional(),
   firstName: z.string(),
   surname: z.string(),
-  phones: z.array(z.string()).nonempty(),
-  emails: z.array(z.string().email()).nonempty(),
+  phones: z.string().array().optional(),
+  emails: z.string().email().array().optional(),
   address: z.array(AddressSchema).nonempty(),
   document: z.string(),
 });
