@@ -1,7 +1,7 @@
-import { z } from "zod";
 import { randomUUID } from "crypto";
+import { z } from "zod";
 
-import { AddressSchema } from "./types.js";
+import { AddressSchema, Serializable } from "./types.js";
 
 export const ParentCreationSchema = z.object({
   id: z.string().uuid().optional(),
@@ -15,23 +15,29 @@ export const ParentCreationSchema = z.object({
 
 export type ParentCreationType = z.infer<typeof ParentCreationSchema>;
 
-export class Parent {
+export class Parent implements Serializable {
   firstName: ParentCreationType["firstName"];
   surname: ParentCreationType["surname"];
   phones: ParentCreationType["phones"];
   emails: ParentCreationType["emails"];
   address: ParentCreationType["address"];
   document: ParentCreationType["document"];
-  readonly id: ParentCreationType["id"];
+  readonly id: string;
 
   constructor(data: ParentCreationType) {
-    this.id = data.id ?? randomUUID();
-    this.firstName = data.firstName;
-    this.surname = data.surname;
-    this.phones = data.phones;
-    this.emails = data.emails;
-    this.address = data.address;
-    this.document = data.document;
+    const parsedData = ParentCreationSchema.parse(data);
+
+    this.id = parsedData.id ?? randomUUID();
+    this.firstName = parsedData.firstName;
+    this.surname = parsedData.surname;
+    this.phones = parsedData.phones;
+    this.emails = parsedData.emails;
+    this.address = parsedData.address;
+    this.document = parsedData.document;
+  }
+
+  fromObject(data: Record<string, unknown>) {
+    return new Parent(ParentCreationSchema.parse(data));
   }
 
   static fromObject(data: Record<string, unknown>) {
