@@ -1,7 +1,7 @@
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { Serializable, SerializableStatic } from "../domain/types.js";
+import type { Serializable, SerializableStatic } from "../domain/types.js";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
 export abstract class Database {
@@ -10,12 +10,11 @@ export abstract class Database {
   readonly dbEntity: SerializableStatic;
 
   constructor(entity: SerializableStatic) {
-    const filePath = fileURLToPath(import.meta.url);
-    this.dbEntity = entity;
     this.dbPath = resolve(
-      dirname(filePath),
-      `./${entity.name.toLowerCase()}.json`
+      dirname(fileURLToPath(import.meta.url)),
+      `.data/${entity.name.toLowerCase()}.json`
     );
+    this.dbEntity = entity;
     this.#initialize();
   }
 
