@@ -23,7 +23,7 @@ export class TeacherService extends Service {
     const existing = this.repository.listBy("document", creationData.document);
 
     if (existing.length > 0) {
-      throw new ConflictError(creationData.document, this.repository.dbEntity);
+      throw new ConflictError(creationData.document, Teacher);
     }
 
     const newEntity = new Teacher(creationData);

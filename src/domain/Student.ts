@@ -40,7 +40,7 @@ export class Student implements Serializable {
   allergies?: string[];
   medications?: string[];
   startDate: Date;
-  #parents: string[];
+  #parents: StudentCreationType["parents"];
   class: string;
 
   constructor(data: StudentCreationType) {
@@ -86,7 +86,7 @@ export class Student implements Serializable {
       allergies: this.allergies,
       medications: this.medications,
       startDate: this.startDate.toISOString(),
-      parents: this.parents,
+      parents: this.#parents,
       class: this.class,
     };
   }

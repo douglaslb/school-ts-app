@@ -1,5 +1,5 @@
 import { Database } from "../data/Db.js";
-import { NotFoundError } from "../domain/errors/NotFoundError.js";
+import { NotFoundError } from "../domain/errors/NotFound.js";
 import { Serializable } from "../domain/types.js";
 
 export abstract class Service {
