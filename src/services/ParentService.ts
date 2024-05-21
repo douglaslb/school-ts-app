@@ -3,15 +3,15 @@ import {
   ParentCreationType,
   ParentUpdateType,
 } from "../domain/Parent.js";
-import { ConflictError } from "../domain/errors/ConflictError.js";
+import { ConflictError } from "../domain/errors/Conflict.js";
 import { Service } from "./BaseService.js";
 
 export class ParentService extends Service {
   update(id: string, newData: ParentUpdateType) {
-    const existing = this.findById(id) as Parent;
+    const entity = this.findById(id) as Parent;
 
     const updated = new Parent({
-      ...existing.toObject(),
+      ...entity.toObject(),
       ...newData,
     });
 
@@ -20,9 +20,9 @@ export class ParentService extends Service {
   }
 
   create(creationData: ParentCreationType) {
-    const existing = this.repository.listBy("document", creationData.document);
+    const entity = this.repository.listBy("document", creationData.document);
 
-    if (existing.length > 0) {
+    if (entity.length > 0) {
       throw new ConflictError(creationData.document, this.repository.dbEntity);
     }
 

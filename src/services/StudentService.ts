@@ -5,7 +5,7 @@ import {
   StudentCreationType,
   StudentUpdateType,
 } from "../domain/Student.js";
-import { ConflictError } from "../domain/errors/ConflictError.js";
+import { ConflictError } from "../domain/errors/Conflict.js";
 import { EmptyDependencyError } from "../domain/errors/EmptyDependency.js";
 import { Serializable } from "../domain/types.js";
 import { Service } from "./BaseService.js";
@@ -20,10 +20,10 @@ export class StudentService extends Service {
   }
 
   update(id: string, newData: StudentUpdateType) {
-    const existing = this.findById(id) as Student;
+    const entity = this.findById(id) as Student;
 
     const updated = new Student({
-      ...existing.toObject(),
+      ...entity.toObject(),
       ...newData,
     });
 
@@ -32,9 +32,9 @@ export class StudentService extends Service {
   }
 
   create(creationData: StudentCreationType): Serializable {
-    const existing = this.repository.listBy("document", creationData.document);
+    const entity = this.repository.listBy("document", creationData.document);
 
-    if (existing.length > 0) {
+    if (entity.length > 0) {
       throw new ConflictError(creationData.document, Student);
     }
 

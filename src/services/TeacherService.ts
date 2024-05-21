@@ -3,15 +3,15 @@ import {
   TeacherCreationType,
   TeacherUpdateType,
 } from "../domain/Teacher.js";
-import { ConflictError } from "../domain/errors/ConflictError.js";
+import { ConflictError } from "../domain/errors/Conflict.js";
 import { Service } from "./BaseService.js";
 
 export class TeacherService extends Service {
   update(id: string, newData: TeacherUpdateType) {
-    const existing = this.findById(id) as Teacher;
+    const entity = this.findById(id) as Teacher;
 
     const updated = new Teacher({
-      ...existing.toObject(),
+      ...entity.toObject(),
       ...newData,
     });
 
@@ -20,9 +20,9 @@ export class TeacherService extends Service {
   }
 
   create(creationData: TeacherCreationType) {
-    const existing = this.repository.listBy("document", creationData.document);
+    const entity = this.repository.listBy("document", creationData.document);
 
-    if (existing.length > 0) {
+    if (entity.length > 0) {
       throw new ConflictError(creationData.document, Teacher);
     }
 
