@@ -1,37 +1,12 @@
-import { ParentRepository } from "../data/ParentRepository.js";
 import {
   Parent,
   ParentCreationType,
   ParentUpdateType,
 } from "../domain/Parent.js";
 import { ConflictError } from "../domain/errors/ConflictError.js";
-import { NotFoundError } from "../domain/errors/NotFoundError.js";
+import { Service } from "./BaseService.js";
 
-export class ParentService {
-  constructor(private readonly repository: ParentRepository) {}
-
-  list() {
-    return this.repository.list();
-  }
-
-  remove(id: string) {
-    this.repository.remove(id);
-  }
-
-  listBy(property: string, value: any) {
-    return this.repository.listBy(property, value);
-  }
-
-  findById(id: string) {
-    const entity = this.repository.findById(id);
-
-    if (!entity) {
-      throw new NotFoundError(id, this.repository.dbEntity);
-    }
-
-    return entity;
-  }
-
+export class ParentService extends Service {
   update(id: string, newData: ParentUpdateType) {
     const existing = this.findById(id) as Parent;
 
