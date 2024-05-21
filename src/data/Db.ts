@@ -51,12 +51,12 @@ export abstract class Database {
 
   remove(id: string) {
     this.dbData.delete(id);
-    this.#updateFile();
+    return this.#updateFile();
   }
 
   save(entity: Serializable) {
     this.dbData.set(entity.id, entity);
-    this.#updateFile();
+    return this.#updateFile();
   }
 
   listBy(property: string, value: unknown): Serializable[] {
