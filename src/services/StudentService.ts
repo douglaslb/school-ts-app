@@ -32,9 +32,12 @@ export class StudentService extends Service {
   }
 
   create(creationData: StudentCreationType): Serializable {
-    const entity = this.repository.listBy("document", creationData.document);
+    const studentEntity = this.repository.listBy(
+      "document",
+      creationData.document
+    );
 
-    if (entity.length > 0) {
+    if (studentEntity.length > 0) {
       throw new ConflictError(creationData.document, Student);
     }
 

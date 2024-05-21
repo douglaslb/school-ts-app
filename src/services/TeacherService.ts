@@ -20,9 +20,12 @@ export class TeacherService extends Service {
   }
 
   create(creationData: TeacherCreationType) {
-    const entity = this.repository.listBy("document", creationData.document);
+    const teacherEntity = this.repository.listBy(
+      "document",
+      creationData.document
+    );
 
-    if (entity.length > 0) {
+    if (teacherEntity.length > 0) {
       throw new ConflictError(creationData.document, Teacher);
     }
 

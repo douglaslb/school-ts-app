@@ -20,9 +20,12 @@ export class ParentService extends Service {
   }
 
   create(creationData: ParentCreationType) {
-    const entity = this.repository.listBy("document", creationData.document);
+    const parentEntity = this.repository.listBy(
+      "document",
+      creationData.document
+    );
 
-    if (entity.length > 0) {
+    if (parentEntity.length > 0) {
       throw new ConflictError(creationData.document, this.repository.dbEntity);
     }
 
