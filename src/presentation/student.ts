@@ -29,7 +29,11 @@ export function studentRouterFactory(studentService: StudentService) {
   router.post(
     "/",
     zodValidationMiddleware(StudentCreationSchema.omit({ id: true })),
-    async (req, res, next) => {
+    async (
+      req: Request<never, any, Omit<StudentCreationType, "id">>,
+      res,
+      next
+    ) => {
       try {
         const { body } = req;
 
