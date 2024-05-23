@@ -5,8 +5,10 @@ import express, {
 } from "express";
 import helmet from "helmet";
 import type { Server } from "http";
+import type { ServiceList } from "../app.js";
+import type { AppConfig } from "../config.js";
 
-export async function WebLayer(config: any, services: any) {
+export async function WebLayer(config: AppConfig, services: ServiceList) {
   const app = express();
   let server: Server | undefined;
 
