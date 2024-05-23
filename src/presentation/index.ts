@@ -7,6 +7,8 @@ import helmet from "helmet";
 import type { Server } from "http";
 import type { ServiceList } from "../app.js";
 import type { AppConfig } from "../config.js";
+import { parentRouterFactory } from "./parent.js";
+import { NotFoundError } from "../domain/errors/NotFound.js";
 
 export async function WebLayer(config: AppConfig, services: ServiceList) {
   const app = express();
@@ -15,10 +17,10 @@ export async function WebLayer(config: AppConfig, services: ServiceList) {
   app.use(helmet());
   app.use(express.json());
 
-  app.use("/classes", classRouterFactory());
-  app.use("/teacher", classRouterFactory());
-  app.use("/parents", classRouterFactory());
-  app.use("/students", classRouterFactory());
+  app.use("/parents", parentRouterFactory(services.parent, services.student));
+  // app.use("/classes", classRouterFactory());
+  // app.use("/teacher", classRouterFactory());
+  // app.use("/students", classRouterFactory());
 
   app.get("/ping", (req, res) => {
     res.send("pong").end();
