@@ -28,7 +28,7 @@ export function parentRouterFactory(
 
   router.post(
     "/",
-    zodValidationMiddleware(ParentCreationSchema),
+    zodValidationMiddleware(ParentCreationSchema.omit({ id: true })),
     async (req, res, next) => {
       try {
         const { body } = req;
