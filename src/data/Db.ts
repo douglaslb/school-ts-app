@@ -1,15 +1,22 @@
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import type { Serializable, SerializableStatic } from "../domain/types.js";
+import type {
+  NonFunctionPropertyNames,
+  Serializable,
+  SerializableStatic,
+} from "../domain/types.js";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
-export abstract class Database {
+export abstract class Database<
+  Static extends SerializableStatic,
+  Instance extends Serializable = InstanceType<Static>
+> {
   protected readonly dbPath: string;
-  protected dbData: Map<string, Serializable> = new Map();
-  readonly dbEntity: SerializableStatic;
+  protected dbData: Map<string, Instance> = new Map();
+  readonly dbEntity: Static;
 
-  constructor(entity: SerializableStatic) {
+  constructor(entity: Static) {
     this.dbPath = resolve(
       dirname(fileURLToPath(import.meta.url)),
       `.data/${entity.name.toLowerCase()}.json`
@@ -45,7 +52,7 @@ export abstract class Database {
     return this;
   }
 
-  list(): Serializable[] {
+  list() {
     return [...this.dbData.values()];
   }
 
@@ -54,16 +61,19 @@ export abstract class Database {
     return this.#updateFile();
   }
 
-  save(entity: Serializable) {
+  save(entity: Instance) {
     this.dbData.set(entity.id, entity);
     return this.#updateFile();
   }
 
-  listBy(property: string, value: unknown): Serializable[] {
+  listBy<Property extends NonFunctionPropertyNames<Instance>>(
+    property: Property,
+    value: Instance[Property]
+  ): Instance[] {
     const allData = this.list();
 
     return allData.filter((data) => {
-      let comparable = (data as any)[property];
+      let comparable = data[property] as unknown;
       let comparison = value as unknown;
 
       if (typeof comparable === "object") {

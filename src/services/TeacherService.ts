@@ -6,9 +6,9 @@ import {
 import { ConflictError } from "../domain/errors/Conflict.js";
 import { Service } from "./BaseService.js";
 
-export class TeacherService extends Service {
+export class TeacherService extends Service<typeof Teacher> {
   update(id: string, newData: TeacherUpdateType) {
-    const entity = this.findById(id) as Teacher;
+    const entity = this.findById(id);
 
     const updated = new Teacher({
       ...entity.toObject(),

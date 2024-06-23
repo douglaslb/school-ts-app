@@ -1,4 +1,5 @@
 import { ClassRepository } from "../data/ClassRepository.js";
+import { Database } from "../data/Db.js";
 import { Class, ClassCreationType, ClassUpdateType } from "../domain/Class.js";
 import { Student } from "../domain/Student.js";
 import { Teacher } from "../domain/Teacher.js";
@@ -10,24 +11,23 @@ import { Service } from "./BaseService.js";
 import { StudentService } from "./StudentService.js";
 import { TeacherService } from "./TeacherService.js";
 
-export class ClassService extends Service {
+export class ClassService extends Service<typeof Class> {
   constructor(
-    repository: ClassRepository,
+    repository: Database<typeof Class>,
     private readonly teacherService: TeacherService,
     private readonly studentService: StudentService
   ) {
     super(repository);
   }
-  update(id: string, newData: ClassUpdateType) {
-    const entity = this.findById(id) as Class;
 
-    if (newData.teacher) {
-      try {
-        this.teacherService.findById(newData.teacher);
-      } catch (error) {
-        throw new NotFoundError(newData.teacher, Teacher);
-      }
+  #assertTeacherExists(teacherId?: string | null) {
+    if (teacherId) {
+      this.teacherService.findById(teacherId);
     }
+  }
+  update(id: string, newData: ClassUpdateType) {
+    const entity = this.findById(id);
+    this.#assertTeacherExists(newData.teacher);
 
     const updated = new Class({
       ...entity.toObject(),
@@ -45,13 +45,7 @@ export class ClassService extends Service {
       throw new ConflictError(creationData.code, Class);
     }
 
-    if (creationData.teacher) {
-      try {
-        this.teacherService.findById(creationData.teacher);
-      } catch (error) {
-        throw new NotFoundError(creationData.teacher, Teacher);
-      }
-    }
+    this.#assertTeacherExists(creationData.teacher);
 
     const newEntity = new Class(creationData);
     this.repository.save(newEntity);
@@ -69,18 +63,18 @@ export class ClassService extends Service {
   }
 
   getTeacher(classId: string) {
-    const classEntity = this.findById(classId) as Class;
+    const classEntity = this.findById(classId);
 
     if (!classEntity.teacher) {
       throw new MissingDependencyError(Teacher, classId, Class);
     }
 
-    return this.teacherService.findById(classEntity.teacher) as Teacher;
+    return this.teacherService.findById(classEntity.teacher);
   }
 
   getStudents(classId: string) {
-    const classEntity = this.findById(classId) as Class;
+    const classEntity = this.findById(classId);
 
-    return this.studentService.listBy("class", classEntity.id) as Student[];
+    return this.studentService.listBy("class", classEntity.id);
   }
 }

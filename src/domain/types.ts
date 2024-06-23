@@ -20,3 +20,7 @@ export interface Serializable {
   toJSON(): string;
   toObject(): Record<string, unknown>;
 }
+
+export type NonFunctionPropertyNames<T> = {
+  [K in keyof T]: T[K] extends Function ? never : K;
+}[keyof T];

@@ -106,10 +106,7 @@ export function teacherRouterFactory(
       let totalStudents: Student[] = [];
 
       for (const classEntity of classes) {
-        const students = studentService.listBy(
-          "class",
-          classEntity.id
-        ) as Student[];
+        const students = studentService.listBy("class", classEntity.id);
         totalStudents = [...totalStudents, ...students];
       }
 

@@ -1,4 +1,4 @@
-import { StudentRepository } from "../data/StudentRepository.js";
+import { Database } from "../data/Db.js";
 import { Parent } from "../domain/Parent.js";
 import {
   Student,
@@ -11,16 +11,16 @@ import { Serializable } from "../domain/types.js";
 import { Service } from "./BaseService.js";
 import { ParentService } from "./ParentService.js";
 
-export class StudentService extends Service {
+export class StudentService extends Service<typeof Student> {
   constructor(
-    repository: StudentRepository,
+    repository: Database<typeof Student>,
     private readonly parentService: ParentService
   ) {
     super(repository);
   }
 
   update(id: string, newData: StudentUpdateType) {
-    const entity = this.findById(id) as Student;
+    const entity = this.findById(id);
 
     const updated = new Student({
       ...entity.toObject(),
@@ -31,7 +31,7 @@ export class StudentService extends Service {
     return updated;
   }
 
-  create(creationData: StudentCreationType): Serializable {
+  create(creationData: StudentCreationType) {
     const studentEntity = this.repository.listBy(
       "document",
       creationData.document
@@ -51,17 +51,17 @@ export class StudentService extends Service {
   }
 
   getParents(studentId: string) {
-    const student = this.findById(studentId) as Student;
+    const student = this.findById(studentId);
     return student.parents.map((parentId) =>
       this.parentService.findById(parentId)
-    ) as Parent[];
+    );
   }
 
   linkParent(
     studentId: string,
     parentsToUpdate: StudentCreationType["parents"]
   ) {
-    const student = this.findById(studentId) as Student;
+    const student = this.findById(studentId);
 
     parentsToUpdate.forEach((parentId) => {
       this.parentService.findById(parentId);
